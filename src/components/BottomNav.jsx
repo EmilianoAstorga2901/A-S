@@ -1,0 +1,3 @@
+import { ChartNoAxesColumnIncreasing, Gift, House, UserRound, WalletCards } from 'lucide-react';
+const tabs=[['Inicio',House],['Actividad',WalletCards],['Invertir',ChartNoAxesColumnIncreasing],['Beneficios',Gift],['Perfil',UserRound]];
+export function BottomNav({active,onChange}){return <nav className="bottom-nav" aria-label="Navegación principal">{tabs.map(([name,Icon])=><button key={name} className={active===name?'active':''} onClick={()=>onChange(name)}><span className={name==='Invertir'?'featured-icon':''}><Icon size={name==='Invertir'?23:21}/></span><small>{name}</small></button>)}</nav>}

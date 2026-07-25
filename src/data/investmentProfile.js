@@ -79,6 +79,20 @@ export const questionnaire = [
     ],
   },
   {
+    id: 'initialAmount', section: 'Tu situación', eyebrow: 'Monto inicial', title: '¿Con cuánto comenzarías esta simulación?', helper: 'El monto permite detectar instrumentos cuya unidad puede ser poco accesible.',
+    options: [
+      { label: 'Menos de $50.000', value: 'under-50k', capacity: 0 }, { label: 'Entre $50.000 y $250.000', value: '50k-250k', capacity: 1 },
+      { label: 'Entre $250.000 y $1.000.000', value: '250k-1m', capacity: 2 }, { label: 'Más de $1.000.000', value: 'over-1m', capacity: 3 },
+    ],
+  },
+  {
+    id: 'monthlyContribution', section: 'Tu situación', eyebrow: 'Aporte mensual', title: '¿Cuánto podrías sumar por mes?', helper: 'Usamos rangos para pensar una estrategia posible sin pedirte un monto exacto.',
+    options: [
+      { label: 'Por ahora no podría aportar', value: 'none', capacity: 0 }, { label: 'Hasta $50.000', value: 'under-50k', capacity: 1 },
+      { label: 'Entre $50.000 y $200.000', value: '50k-200k', capacity: 2 }, { label: 'Más de $200.000', value: 'over-200k', capacity: 3 },
+    ],
+  },
+  {
     id: 'experience',
     section: 'Tu experiencia',
     eyebrow: 'Experiencia inversora',
@@ -115,6 +129,13 @@ export const questionnaire = [
       { label: 'Vendería una parte', detail: 'Reduciría mi exposición', value: 'reduce', tolerance: 1 },
       { label: 'Mantendría mi inversión', detail: 'Esperaría la recuperación', value: 'hold', tolerance: 2 },
       { label: 'Invertiría un poco más', detail: 'Aprovecharía precios más bajos', value: 'buy', tolerance: 3 },
+    ],
+  },
+  {
+    id: 'maxLoss', section: 'Cómo decidís', eyebrow: 'Pérdida temporal', title: '¿Qué caída temporal máxima podrías tolerar?', helper: 'Pensá en una caída que podrías atravesar sin necesitar vender por urgencia.',
+    options: [
+      { label: 'Hasta 5%', value: '5', tolerance: 0 }, { label: 'Hasta 10%', value: '10', tolerance: 1 },
+      { label: 'Hasta 20%', value: '20', tolerance: 2 }, { label: '30% o más', value: '30', tolerance: 3 },
     ],
   },
   {

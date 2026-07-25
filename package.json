@@ -1,9 +1,17 @@
 {
   "name": "prisma-wallet",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
-  "scripts": {"dev":"vite --host 0.0.0.0","build":"vite build","lint":"eslint ."},
-  "dependencies": {"@vitejs/plugin-react":"latest","vite":"latest","typescript":"latest","react":"latest","react-dom":"latest","lucide-react":"latest"},
-  "devDependencies": {"eslint":"latest","@eslint/js":"latest","eslint-plugin-react-hooks":"latest","eslint-plugin-react-refresh":"latest","globals":"latest"}
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite": "^5.4.10"
+  }
 }

@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, ChevronRight, Clock3, Info, LockKeyhole, RotateCcw, ShieldCheck, Sparkles, Target, TrendingUp, WalletCards } from 'lucide-react';
 import { calculateProfile, questionnaire } from '../data/investmentProfile';
+import { profileRepository } from '../services/persistence/repositories';
 
-function Intro({ onStart, onBack }) {
+function Intro({ onStart, onBack, onExplore }) {
   return <div className="invest-screen intro-screen">
     <div className="invest-header"><button className="round-back" onClick={onBack} aria-label="Volver al inicio"><ArrowLeft size={20}/></button><span className="brand-mark">PRISMA</span><span className="header-spacer"/></div>
     <div className="intro-hero">
@@ -12,11 +13,11 @@ function Intro({ onStart, onBack }) {
       <p>Antes de explorar el mercado, queremos entender tus objetivos y cómo te sentís frente al riesgo.</p>
     </div>
     <div className="intro-features">
-      <div><span><Clock3 size={20}/></span><p><strong>Solo 3 minutos</strong><small>10 preguntas simples</small></p></div>
+      <div><span><Clock3 size={20}/></span><p><strong>Solo unos minutos</strong><small>Preguntas simples y transparentes</small></p></div>
       <div><span><ShieldCheck size={20}/></span><p><strong>Sin respuestas correctas</strong><small>Tu situación es única</small></p></div>
       <div><span><LockKeyhole size={20}/></span><p><strong>Información protegida</strong><small>Podés cambiarla cuando quieras</small></p></div>
     </div>
-    <div className="invest-footer"><button className="continue-button" onClick={onStart}>Conocer mi perfil <ArrowRight size={18}/></button><p>Esto no constituye asesoramiento financiero.</p></div>
+    <div className="invest-footer"><button className="continue-button" onClick={onStart}>Crear mi primera cartera <ArrowRight size={18}/></button><button className="outline-wide-button" onClick={onExplore}>Explorar inversiones</button><p>Esto es una simulación educativa y no constituye asesoramiento financiero.</p></div>
   </div>;
 }
 
@@ -71,19 +72,24 @@ function Result({ result, onRestart, onHome }) {
       <div className="allocation-list">{result.allocation.map(asset=><details key={asset.name}><summary><i style={{background:asset.color}}/><span>{asset.name}</span><strong>{asset.percentage}%</strong><ChevronRight size={16}/></summary><p>{asset.reason}</p></details>)}</div>
     </section>
     <div className="result-notice"><Info size={18}/><p><strong>Una guía, no una garantía</strong><span>Esta propuesta es educativa y no asegura rendimientos. Antes de invertir, vas a poder revisar cada activo.</span></p></div>
-    <div className="result-actions"><button className="continue-button" onClick={onHome}>Guardar y volver al inicio <ArrowRight size={18}/></button><button className="text-button" onClick={onRestart}>Volver a hacer el test</button></div>
+    <div className="result-actions"><button className="continue-button" onClick={onHome}>Explorar con mi perfil <ArrowRight size={18}/></button><button className="text-button" onClick={onRestart}>Volver a hacer el test</button></div>
   </div>;
 }
 
-export function InvestmentExperience({ onClose }) {
+export function InvestmentExperience({ onClose, onExplore }) {
   const [stage, setStage] = useState('intro');
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const result = useMemo(() => calculateProfile(answers), [answers]);
   const start = () => { setIndex(0); setStage('question'); };
   const restart = () => { setAnswers({}); start(); };
-  const next = () => index < questionnaire.length - 1 ? setIndex(value => value + 1) : setStage('result');
-  if (stage === 'intro') return <Intro onStart={start} onBack={onClose}/>;
-  if (stage === 'result') return <Result result={result} onRestart={restart} onHome={onClose}/>;
+  const next = () => {
+    if (index < questionnaire.length - 1) return setIndex(value => value + 1);
+    const calculated = calculateProfile(answers);
+    profileRepository.saveProfile({ ...calculated, answers, capacityLabel: calculated.capacity < 1.15 ? 'Baja' : calculated.capacity < 2.15 ? 'Media' : 'Alta', toleranceLabel: calculated.tolerance < 1.15 ? 'Baja' : calculated.tolerance < 2.15 ? 'Media' : 'Alta', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+    setStage('result');
+  };
+  if (stage === 'intro') return <Intro onStart={start} onBack={onClose} onExplore={onExplore}/>;
+  if (stage === 'result') return <Result result={result} onRestart={restart} onHome={onExplore}/>;
   return <Question index={index} answers={answers} onAnswer={(id,value)=>setAnswers(current=>({...current,[id]:value}))} onNext={next} onPrevious={()=>setIndex(value=>value-1)} onExit={()=>setStage('intro')}/>;
 }

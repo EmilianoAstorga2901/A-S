@@ -1,1 +1,0 @@
-"""User personalization domain."""

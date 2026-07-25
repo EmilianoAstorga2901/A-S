@@ -1,0 +1,2 @@
+import { ArrowRight, Gift, Sparkles } from 'lucide-react';
+export function PromotionCard(){return <div className="promo-card"><div className="promo-copy"><span className="promo-tag"><Sparkles size={12}/> PARA VOS</span><h3>Más beneficios,<br/>más posibilidades</h3><p>Descubrí reintegros en tus marcas favoritas.</p><button>Explorar beneficios <ArrowRight size={16}/></button></div><div className="promo-art"><span className="orb orb-one"/><span className="orb orb-two"/><Gift size={54}/></div></div>}

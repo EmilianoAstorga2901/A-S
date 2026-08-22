@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Inflación, tasas y liquidez en pesos</title><desc id="desc">Ilustración editorial de una moneda argentina, precios y evolución mensual.</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#163a5b"/><stop offset="1" stop-color="#78b8d7"/></linearGradient></defs>
+  <rect width="640" height="360" fill="url(#bg)"/><circle cx="161" cy="179" r="112" fill="#eef9ff"/><circle cx="161" cy="179" r="87" fill="#89c8e7"/><path d="M161 116v126M195 135c-17-18-70-17-70 16 0 43 76 15 76 59 0 34-57 39-83 14" fill="none" stroke="#173b57" stroke-width="17" stroke-linecap="round"/>
+  <g fill="#d9edf7"><rect x="333" y="230" width="43" height="75" rx="7"/><rect x="399" y="184" width="43" height="121" rx="7"/><rect x="465" y="125" width="43" height="180" rx="7"/><rect x="531" y="69" width="43" height="236" rx="7"/></g>
+  <path d="M326 247L421 197l68-71 99-80" fill="none" stroke="#fff4a8" stroke-width="12" stroke-linecap="round"/>
+</svg>

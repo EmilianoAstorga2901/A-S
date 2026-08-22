@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Tasas de interés y mercado global</title><desc id="desc">Ilustración editorial de un edificio institucional, curvas de tasa y monedas.</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#102d4a"/><stop offset="1" stop-color="#39789b"/></linearGradient></defs>
+  <rect width="640" height="360" fill="url(#bg)"/><path d="M40 294 C170 232 235 273 340 190 S500 87 612 113" fill="none" stroke="#8ed8ff" stroke-width="12" stroke-linecap="round" opacity=".9"/>
+  <g fill="#eef7fc"><path d="M118 115 L286 43 L454 115 Z"/><rect x="133" y="128" width="306" height="25" rx="5"/><rect x="151" y="165" width="48" height="112" rx="6"/><rect x="232" y="165" width="48" height="112" rx="6"/><rect x="313" y="165" width="48" height="112" rx="6"/><rect x="394" y="165" width="28" height="112" rx="6"/><rect x="112" y="286" width="365" height="24" rx="5"/></g>
+  <circle cx="530" cy="83" r="51" fill="#ffd36a"/><path d="M530 53v60M548 65c-9-8-34-8-34 7 0 20 37 7 37 28 0 16-27 18-40 7" fill="none" stroke="#87651c" stroke-width="8" stroke-linecap="round"/>
+</svg>

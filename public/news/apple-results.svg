@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Resultados corporativos y tecnología</title>
+  <desc id="desc">Ilustración editorial con un dispositivo, barras y una línea de resultados.</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b1524"/><stop offset="1" stop-color="#315b91"/></linearGradient><linearGradient id="glow" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#63b3ff"/><stop offset="1" stop-color="#d9f0ff"/></linearGradient></defs>
+  <rect width="640" height="360" fill="url(#bg)"/><circle cx="535" cy="70" r="110" fill="#64b5ff" opacity=".12"/><circle cx="86" cy="326" r="150" fill="#ffffff" opacity=".05"/>
+  <rect x="62" y="48" width="188" height="264" rx="32" fill="#f5f9fd" opacity=".96"/><rect x="80" y="75" width="152" height="194" rx="14" fill="#dbe9f6"/><circle cx="156" cy="289" r="9" fill="#8aa7c2"/>
+  <path d="M314 263 L362 219 L411 232 L464 145 L519 171 L579 93" fill="none" stroke="url(#glow)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#b6d8f6"><rect x="316" y="111" width="28" height="150" rx="8"/><rect x="367" y="154" width="28" height="107" rx="8"/><rect x="418" y="126" width="28" height="135" rx="8"/><rect x="469" y="82" width="28" height="179" rx="8"/></g>
+</svg>

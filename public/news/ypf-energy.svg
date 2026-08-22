@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Energía, producción y flujo de caja</title><desc id="desc">Ilustración editorial de infraestructura energética y gráficos operativos.</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#053b64"/><stop offset="1" stop-color="#0d8fa1"/></linearGradient></defs>
+  <rect width="640" height="360" fill="url(#bg)"/><circle cx="540" cy="67" r="45" fill="#ffe66c"/><path d="M0 287 C115 238 178 313 294 258 S490 206 640 262V360H0Z" fill="#062f4e"/>
+  <g fill="none" stroke="#e9f6fb" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"><path d="M124 269V99h95l-37 64h61l-83 106"/><path d="M331 265V128h118v137"/><path d="M352 128V92h76v36M371 165h40M371 202h40"/></g>
+  <path d="M474 252l38-56 36 18 52-83" fill="none" stroke="#91f1d0" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><circle cx="600" cy="131" r="10" fill="#91f1d0"/>
+</svg>

@@ -3,7 +3,27 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": {"dev":"vite --host 0.0.0.0","build":"vite build","lint":"eslint ."},
-  "dependencies": {"@vitejs/plugin-react":"latest","vite":"latest","typescript":"latest","react":"latest","react-dom":"latest","lucide-react":"latest"},
-  "devDependencies": {"eslint":"latest","@eslint/js":"latest","eslint-plugin-react-hooks":"latest","eslint-plugin-react-refresh":"latest","globals":"latest"}
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "lint": "eslint .",
+    "test": "node --test src/*.test.js",
+    "test:engine": "node --test src/prismaEngine.test.js",
+    "api": "python3 -m uvicorn backend.main:app --reload --port 8000"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "lucide-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "typescript": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "@eslint/js": "latest",
+    "eslint": "latest",
+    "eslint-plugin-react-hooks": "latest",
+    "eslint-plugin-react-refresh": "latest",
+    "globals": "latest"
+  }
 }

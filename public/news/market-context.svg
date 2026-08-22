@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Contexto de mercado</title><desc id="desc">Ilustración editorial abstracta de noticias, activos y gráficos.</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#133957"/><stop offset="1" stop-color="#3b91a2"/></linearGradient></defs>
+  <rect width="640" height="360" fill="url(#bg)"/><rect x="61" y="59" width="238" height="244" rx="20" fill="#f7fbfd"/><rect x="89" y="91" width="178" height="22" rx="8" fill="#77b5d5"/><rect x="89" y="135" width="120" height="12" rx="6" fill="#c4d9e5"/><rect x="89" y="165" width="173" height="12" rx="6" fill="#c4d9e5"/><rect x="89" y="195" width="155" height="12" rx="6" fill="#c4d9e5"/><rect x="89" y="235" width="83" height="40" rx="10" fill="#dbeaf1"/>
+  <path d="M354 264l52-50 49 19 57-91 70 24" fill="none" stroke="#aaf3d4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/><g fill="#effbff"><circle cx="354" cy="264" r="10"/><circle cx="406" cy="214" r="10"/><circle cx="455" cy="233" r="10"/><circle cx="512" cy="142" r="10"/><circle cx="582" cy="166" r="10"/></g>
+</svg>

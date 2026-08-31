@@ -96,7 +96,7 @@ export function buildInvestorMap({ profile, answers, knowledge, previousMap = nu
     label: 'Capacidad y tolerancia',
     description: 'Es la única rama que fija los límites de riesgo de la propuesta.',
     safetyImpact: 'binding',
-    confidence: 100,
+    confidence: profile?.assessment_quality?.confidence ?? 60,
     children: {
       capacity: leaf(profile?.capacity_score ?? 0, 100, `Capacidad objetiva: ${profile?.capacity || 'sin calcular'}`, now),
       tolerance: leaf(profile?.tolerance_score ?? 0, 100, `Tolerancia declarada: ${profile?.tolerance || 'sin calcular'}`, now),

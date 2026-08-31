@@ -51,7 +51,8 @@ class UserProfile(BaseModel):
     sectors: list[str]
     allocation: dict[str, int]
     explanation_level: Literal["simple", "intermediate", "advanced"] = "simple"
-    rules_version: str = "profile_v1.0"
+    assessment_quality: dict[str, object] = Field(default_factory=dict)
+    rules_version: str = "profile_v2.0"
 
 
 class AssetInput(BaseModel):

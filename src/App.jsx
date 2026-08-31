@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ArrowLeft,
   BrainCircuit,
@@ -39,7 +39,9 @@ import { AssetDetail } from './features/AssetDetail';
 import { MarketAssetDetail } from './features/MarketAssetDetail';
 import { PortfolioComplete, PortfolioReview, PurchaseConfirmation } from './features/PortfolioReview';
 import { addBehaviorSignal, setExplanationPreference } from './investorMap';
-import { clearPrismaStorage, createDemoProfileResult } from './demoMode';
+import { clearPrismaStorage, createDemoProfileResult, initializeDemoStorage } from './demoMode';
+import { isPersistenceSuccess, loadInvestorState, readStorageText, saveLegacyProfileResult, writeStorageText } from './investorStateRepository';
+import { projectInvestorStateToLegacy } from './investorState';
 import './extended.css';
 import './prisma-enhanced.css';
 
@@ -287,7 +289,7 @@ function mapValue(value, score = true) {
   return String(value ?? 'Sin datos');
 }
 
-function InvestorMapPanel({ result, onEdit, onReset, onExplanationChange }) {
+export function InvestorMapPanel({ result, onEdit, onReset, onExplanationChange }) {
   const map = result?.investorMap;
   const knowledge = result?.knowledge;
   if (!map) return null;
@@ -429,11 +431,7 @@ function SaleSimulator({ draft, setScreen, inform }) {
 }
 
 function readStoredProfile() {
-  try {
-    return JSON.parse(localStorage.getItem('prisma-profile-result'));
-  } catch {
-    return null;
-  }
+  return loadInvestorState(localStorage).legacyProfileResult;
 }
 
 function readStoredAssetStates() {
@@ -444,15 +442,31 @@ function readStoredAssetStates() {
   }
 }
 
+function useProfilePersistence(storage, initializer = () => loadInvestorState(storage).legacyProfileResult) {
+  const [profileResult, setProfileResult] = useState(initializer);
+  const persistProfileResult = (result, changedDomains) => {
+    if (!result) return { ok: false, status: 'invalid' };
+    const outcome = saveLegacyProfileResult(storage, result, { changedDomains });
+    if (isPersistenceSuccess(outcome)) setProfileResult(projectInvestorStateToLegacy(outcome.state));
+    return outcome;
+  };
+  return { profileResult, setProfileResult, persistProfileResult };
+}
+
+export function ProfilePersistenceBoundary({ storage, initialResult, children }) {
+  return children(useProfilePersistence(storage, () => initialResult));
+}
+
 export default function App() {
   const [screen, setScreen] = useState('home');
   const [active, setActive] = useState('Inicio');
   const [toast, setToast] = useState('');
   const [assetStates, setAssetStates] = useState(readStoredAssetStates);
-  const [profileResult, setProfileResult] = useState(readStoredProfile);
-  const [isDemo, setIsDemo] = useState(() => localStorage.getItem('prisma-demo-mode') === 'true');
+  const { profileResult, setProfileResult, persistProfileResult } = useProfilePersistence(localStorage, readStoredProfile);
+  const [isDemo, setIsDemo] = useState(() => readStorageText(localStorage, 'prisma-demo-mode').value === 'true');
   const [saleDraft, setSaleDraft] = useState(null);
   const [purchaseDraft, setPurchaseDraft] = useState(null);
+  const persistedAssetStates = useRef(Object.keys(assetStates).length ? JSON.stringify(assetStates) : null);
 
   const inform = (message) => {
     setToast(message);
@@ -468,31 +482,31 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (Object.keys(assetStates).length) localStorage.setItem('prisma-asset-states', JSON.stringify(assetStates));
+    const serialized = Object.keys(assetStates).length ? JSON.stringify(assetStates) : null;
+    if (serialized === persistedAssetStates.current) return;
+    if (serialized) localStorage.setItem('prisma-asset-states', serialized);
     else localStorage.removeItem('prisma-asset-states');
+    persistedAssetStates.current = serialized;
   }, [assetStates]);
 
-  useEffect(() => {
-    if (profileResult) localStorage.setItem('prisma-profile-result', JSON.stringify(profileResult));
-    else localStorage.removeItem('prisma-profile-result');
-  }, [profileResult]);
-
   const startDemo = () => {
-    clearPrismaStorage();
     const result = createDemoProfileResult();
-    setProfileResult(result);
+    const initialized = initializeDemoStorage(result);
+    if (!initialized.ok) return;
+    setProfileResult(projectInvestorStateToLegacy(initialized.persistence.state));
     setAssetStates({});
     setSaleDraft(null);
     setPurchaseDraft(null);
     setIsDemo(true);
-    localStorage.setItem('prisma-demo-mode', 'true');
+    writeStorageText(localStorage, 'prisma-demo-mode', 'true');
     setActive('Invertir');
     setScreen('starting-point');
     inform('Modo demo iniciado. El caso se puede reiniciar en cualquier momento.');
   };
 
   const resetPrismaData = () => {
-    clearPrismaStorage();
+    const cleared = clearPrismaStorage();
+    if (!cleared.ok) return;
     setProfileResult(null);
     setAssetStates({});
     setSaleDraft(null);
@@ -508,12 +522,12 @@ export default function App() {
   };
 
   const recordBehavior = (type, metadata = {}) => {
-    setProfileResult((current) => addBehaviorSignal(current, type, metadata));
+    persistProfileResult(addBehaviorSignal(profileResult, type, metadata), ['behavior']);
   };
 
   const changeExplanationLevel = (level) => {
-    setProfileResult((current) => setExplanationPreference(current, level));
-    inform(`Prisma va a usar explicaciones de nivel ${explanationLabels[level].toLowerCase()}.`);
+    const saved = persistProfileResult(setExplanationPreference(profileResult, level), ['preferences']);
+    if (isPersistenceSuccess(saved)) inform(`Prisma va a usar explicaciones de nivel ${explanationLabels[level].toLowerCase()}.`);
   };
 
   const useInitialProposal = () => {

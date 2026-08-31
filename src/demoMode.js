@@ -1,10 +1,12 @@
 import { calculateProfile } from './profile.js';
 import { evaluateKnowledgeResponses, mergeKnowledgeIntoProfile } from './knowledgeEngine.js';
 import { buildInvestorMap } from './investorMap.js';
+import { isPersistenceSuccess, removeStorageKeys, resetPrismaStateStorage, saveLegacyProfileResult } from './investorStateRepository.js';
 
 export const DEMO_VERSION = 'demo_v1.0';
 
 export const prismaLocalStorageKeys = [
+  'prisma-investor-state',
   'prisma-profile-result',
   'prisma-asset-states',
   'prisma-knowledge-history',
@@ -65,6 +67,32 @@ export function createDemoProfileResult(now = new Date().toISOString()) {
 }
 
 export function clearPrismaStorage(local = globalThis.localStorage, session = globalThis.sessionStorage) {
-  prismaLocalStorageKeys.forEach((key) => local?.removeItem(key));
-  prismaSessionStorageKeys.forEach((key) => session?.removeItem(key));
+  const stateResult = resetPrismaStateStorage(local);
+  if (!stateResult.ok) return {
+    ok: false,
+    status: stateResult.status,
+    state: stateResult,
+    local: null,
+    session: null,
+    rolledBack: stateResult.rolledBack,
+    rollbackError: stateResult.rollbackError || null,
+  };
+  const localResult = removeStorageKeys(local, prismaLocalStorageKeys.filter((key) => !['prisma-investor-state', 'prisma-profile-result'].includes(key)));
+  const sessionResult = removeStorageKeys(session, prismaSessionStorageKeys);
+  return {
+    ok: localResult.ok && sessionResult.ok,
+    status: localResult.ok && sessionResult.ok ? 'removed' : 'partial_failure',
+    state: stateResult,
+    local: localResult,
+    session: sessionResult,
+  };
+}
+
+export function initializeDemoStorage(result, local = globalThis.localStorage, session = globalThis.sessionStorage) {
+  const cleared = clearPrismaStorage(local, session);
+  if (!cleared.ok) return { ok: false, status: 'reset_failed', cleared, persistence: null };
+  const persistence = saveLegacyProfileResult(local, result, {
+    changedDomains: ['financialSituation', 'risk', 'objectives', 'knowledge', 'behavior', 'preferences', 'evidence'],
+  });
+  return { ok: isPersistenceSuccess(persistence), status: persistence.status, cleared, persistence };
 }

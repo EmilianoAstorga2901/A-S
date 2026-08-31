@@ -16,6 +16,8 @@ import {
   selectGatewayQuestions,
 } from '../knowledgeEngine';
 import { buildInvestorMap } from '../investorMap';
+import { isPersistenceSuccess, saveLegacyProfileResult, writeStorageJson } from '../investorStateRepository';
+import { projectInvestorStateToLegacy } from '../investorState';
 
 function MoneyAnswer({ value = {}, onChange, allowUnsure = false }) {
   const update = (patch) => onChange({ currency: 'ARS', amount: '', unsure: false, ...value, ...patch });
@@ -200,10 +202,13 @@ export function Onboarding({ BackHeader, onCancel, onComplete, initialResult = n
       ...(initialResult?.demo ? { demo: initialResult.demo } : {}),
     };
     const nextHistory = appendKnowledgeHistory(knowledgeHistory, Object.keys(knowledgeResponses));
-    localStorage.setItem('prisma-knowledge-history', JSON.stringify(nextHistory));
-    localStorage.setItem('prisma-profile-result', JSON.stringify(result));
+    const saved = persistCompletedOnboarding(localStorage, result, nextHistory);
+    if (!isPersistenceSuccess(saved)) {
+      setIsSubmitting(false);
+      return;
+    }
     setIsSubmitting(false);
-    onComplete(result);
+    onComplete(projectInvestorStateToLegacy(saved.state));
   };
 
   const next = async () => {
@@ -306,4 +311,14 @@ export function Onboarding({ BackHeader, onCancel, onComplete, initialResult = n
       </div>
     </>
   );
+}
+// eslint-disable-next-line react-refresh/only-export-components -- exported production action is exercised without duplicating its persistence policy
+export function persistCompletedOnboarding(storage, result, nextHistory) {
+  const saved = saveLegacyProfileResult(storage, result, {
+    changedDomains: ['financialSituation', 'risk', 'objectives', 'knowledge', 'preferences', 'evidence'],
+  });
+  if (!isPersistenceSuccess(saved)) return saved;
+  const history = writeStorageJson(storage, 'prisma-knowledge-history', nextHistory);
+  if (!history.ok) return { ...history, state: saved.state, saved: false };
+  return saved;
 }

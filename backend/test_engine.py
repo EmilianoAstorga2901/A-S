@@ -38,11 +38,18 @@ class EngineTests(unittest.TestCase):
         self.assertGreaterEqual(result.allocation["liquidity"], 50)
         self.assertEqual(result.allocation["satellite"], 0)
 
-    def test_debt_warns_but_does_not_change_score(self):
+    def test_costly_debt_warns_and_caps_risk(self):
         clean = build_profile(answers())
         costly = build_profile(answers(debt_status="costly"))
-        self.assertEqual(clean.profile, costly.profile)
+        self.assertEqual(clean.profile, "Moderado")
+        self.assertEqual(costly.profile, "Moderado")
         self.assertTrue(costly.warnings)
+
+    def test_late_debt_is_binding_and_requires_review(self):
+        result = build_profile(answers(debt_status="late", loss_reaction="buy_more", loss_tolerance_pct=30))
+        self.assertEqual(result.profile, "Conservador")
+        self.assertTrue(result.assessment_quality["requires_review"])
+        self.assertLessEqual(result.assessment_quality["confidence"], 90)
 
     def test_sector_limit(self):
         with self.assertRaises(ValueError):

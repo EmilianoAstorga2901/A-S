@@ -143,6 +143,10 @@ def build_profile(a: ProfileAnswers) -> UserProfile:
         cap("Conservador", "La necesidad probable de retirar casi todo exige alta liquidez.")
     if a.liquidity_need == "important":
         cap("Moderado", "Necesitar una parte importante limita el perfil a Moderado.")
+    if a.debt_status == "costly":
+        cap("Moderado", "La deuda costosa limita el perfil hasta comparar su costo efectivo.")
+    if a.debt_status == "late":
+        cap("Conservador", "Las deudas atrasadas requieren estabilizar las finanzas antes de asumir riesgo.")
 
     if a.debt_status == "costly":
         warnings.append("Tenés deuda costosa: compará su costo con el beneficio incierto de invertir.")
@@ -165,6 +169,11 @@ def build_profile(a: ProfileAnswers) -> UserProfile:
     if limits:
         reasons.append(limits[0])
 
+    contradiction_gap = abs(capacity_score - tolerance_score)
+    uncertainty_penalty = (10 if a.emergency_fund == "unsure" else 0) + (10 if a.debt_status == "unsure" else 0)
+    confidence = max(35, min(90, 100 - uncertainty_penalty - (10 if contradiction_gap >= 40 else 0)))
+    requires_review = a.debt_status in {"costly", "late", "unsure"} or a.income_stability == "difficulties" or a.emergency_fund == "no" or contradiction_gap >= 40
+
     return UserProfile(
         profile=profile,
         capacity=capacity,
@@ -178,6 +187,7 @@ def build_profile(a: ProfileAnswers) -> UserProfile:
         sectors=list(dict.fromkeys(a.sectors))[:3],
         allocation=_allocation(a, profile),
         explanation_level=_explanation_level(a.experience),
+        assessment_quality={"coverage": 100, "confidence": confidence, "contradiction_gap": contradiction_gap, "requires_review": requires_review, "basis": "Autodeclarado; no validado externamente"},
     )
 
 

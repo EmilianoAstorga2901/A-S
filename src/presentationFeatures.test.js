@@ -75,6 +75,19 @@ test('conocimiento cambia explicación pero nunca los cálculos de seguridad', (
   assert.equal(knowledge.safetyImpact, 'none');
 });
 
+test('profile_v2 makes financial fragility binding and exposes uncertainty', () => {
+  const lateDebt = calculateProfile({ ...answers, debts: 'late', reaction: 'buy_more', lossTolerance: 30 });
+  assert.equal(lateDebt.profile, 'Conservador');
+  assert.equal(lateDebt.rules_version, 'profile_v2.0');
+  assert.equal(lateDebt.assessment_quality.requires_review, true);
+  assert.ok(lateDebt.assessment_quality.confidence <= 90);
+  const uncertainAnswers = { ...answers, debts: 'unsure', emergencyFund: 'unsure' };
+  const uncertain = calculateProfile(uncertainAnswers);
+  assert.ok(uncertain.assessment_quality.confidence < lateDebt.assessment_quality.confidence);
+  const map = buildInvestorMap({ profile: uncertain, answers: uncertainAnswers, knowledge: evaluateKnowledgeResponses(gatewayResponses) });
+  assert.equal(map.tree.safety.confidence, uncertain.assessment_quality.confidence);
+});
+
 test('el mapa registra decisiones sin modificar la rama vinculante', () => {
   const profile = calculateProfile(answers);
   const knowledge = evaluateKnowledgeResponses(gatewayResponses);

@@ -395,6 +395,8 @@ export function calculateProfile(answers) {
   if (answers.emergencyFund === 'unsure') capAt('Moderado', 'Conviene revisar el fondo de emergencia antes de aumentar riesgo.');
   if (answers.liquidity === 'almost_all') capAt('Conservador', 'La necesidad probable de retirar casi todo exige alta liquidez.');
   if (answers.liquidity === 'important') capAt('Moderado', 'Necesitar una parte importante limita el perfil a Moderado.');
+  if (answers.debts === 'costly') capAt('Moderado', 'La deuda costosa limita el perfil hasta comparar su costo efectivo.');
+  if (answers.debts === 'late') capAt('Conservador', 'Las deudas atrasadas requieren estabilizar las finanzas antes de asumir riesgo.');
 
   if (answers.debts === 'costly') warnings.push('Tenés deuda costosa: compará su costo con el beneficio incierto de invertir.');
   if (answers.debts === 'late') warnings.push('Antes de invertir, revisá las deudas atrasadas o difíciles de pagar.');
@@ -413,6 +415,19 @@ export function calculateProfile(answers) {
   if (limits.length) reasons.push(limits[0]);
 
   const allocation = allocationForProfile(profile, answers);
+  const essentialKeys = ['goal', 'horizon', 'liquidity', 'emergencyFund', 'debts', 'income', 'reaction', 'lossTolerance', 'contribution'];
+  const answeredCount = essentialKeys.filter((key) => {
+    const value = answers[key];
+    return key === 'contribution' ? Boolean(value?.unsure || Number(value?.amount) > 0) : value !== undefined && value !== null && value !== '';
+  }).length;
+  const coverage = Math.round(100 * answeredCount / essentialKeys.length);
+  const contradictionGap = Math.abs(capacityScore - toleranceScore);
+  const uncertaintyPenalty = (answers.emergencyFund === 'unsure' ? 10 : 0) + (answers.debts === 'unsure' ? 10 : 0);
+  const confidence = Math.max(35, Math.min(90, coverage - uncertaintyPenalty - (contradictionGap >= 40 ? 10 : 0)));
+  const requiresReview = ['costly', 'late', 'unsure'].includes(answers.debts)
+    || answers.income === 'difficulties'
+    || answers.emergencyFund === 'no'
+    || contradictionGap >= 40;
 
   return {
     profile,
@@ -427,7 +442,8 @@ export function calculateProfile(answers) {
     sectors: (answers.sectors || []).filter((sector) => sector !== 'none').slice(0, 3),
     allocation,
     explanation_level: explanationLevelForExperience(answers.experience),
-    rules_version: 'profile_v1.0',
+    assessment_quality: { coverage, confidence, contradiction_gap: contradictionGap, requires_review: requiresReview, basis: 'Autodeclarado; no validado externamente' },
+    rules_version: 'profile_v2.0',
     goal_vector_version: 'goal_vector_v1.0',
   };
 }
